@@ -36,7 +36,7 @@ var blks ={
 };
 
 app.get('/', function(req, res) {
-   res.sendFile(__dirname + '/index.html');
+   res.sendFile(__dirname + '/client/index.html');
 });
 
 app.get('/blocks', function(req,res) {
