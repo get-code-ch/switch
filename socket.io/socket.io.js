@@ -9,7 +9,7 @@ module.exports = _dereq_('./socket');
 /**
  * Exports parser
  *
- * @api static
+ * @api client
  *
  */
 module.exports.parser = _dereq_('engine.io-parser');
@@ -48,7 +48,7 @@ function noop(){}
  *
  * @param {String|Object} uri or options
  * @param {Object} options
- * @api static
+ * @api client
  */
 
 function Socket(uri, opts){
@@ -109,7 +109,7 @@ function Socket(uri, opts){
     this.perMessageDeflate.threshold = 1024;
   }
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   this.pfx = opts.pfx || null;
   this.key = opts.key || null;
   this.passphrase = opts.passphrase || null;
@@ -118,7 +118,7 @@ function Socket(uri, opts){
   this.ciphers = opts.ciphers || null;
   this.rejectUnauthorized = opts.rejectUnauthorized === undefined ? null : opts.rejectUnauthorized;
 
-  // other options for Node.js client
+  // other options for Node.javascript client
   var freeGlobal = typeof global == 'object' && global;
   if (freeGlobal.global === freeGlobal) {
     if (opts.extraHeaders && Object.keys(opts.extraHeaders).length > 0) {
@@ -140,7 +140,7 @@ Emitter(Socket.prototype);
 /**
  * Protocol version.
  *
- * @api static
+ * @api client
  */
 
 Socket.protocol = parser.protocol; // this is an int
@@ -404,7 +404,7 @@ Socket.prototype.probe = function (name) {
 /**
  * Called when connection is deemed open.
  *
- * @api static
+ * @api client
  */
 
 Socket.prototype.onOpen = function () {
@@ -580,7 +580,7 @@ Socket.prototype.flush = function () {
  * @param {Function} callback function.
  * @param {Object} options.
  * @return {Socket} for chaining.
- * @api static
+ * @api client
  */
 
 Socket.prototype.write =
@@ -780,7 +780,7 @@ function Transport (opts) {
   this.socket = opts.socket;
   this.enablesXDR = opts.enablesXDR;
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   this.pfx = opts.pfx;
   this.key = opts.key;
   this.passphrase = opts.passphrase;
@@ -789,7 +789,7 @@ function Transport (opts) {
   this.ciphers = opts.ciphers;
   this.rejectUnauthorized = opts.rejectUnauthorized;
 
-  // other options for Node.js client
+  // other options for Node.javascript client
   this.extraHeaders = opts.extraHeaders;
 }
 
@@ -804,7 +804,7 @@ Emitter(Transport.prototype);
  *
  * @param {String} str
  * @return {Transport} for chaining
- * @api static
+ * @api client
  */
 
 Transport.prototype.onError = function (msg, desc) {
@@ -818,7 +818,7 @@ Transport.prototype.onError = function (msg, desc) {
 /**
  * Opens the transport.
  *
- * @api static
+ * @api client
  */
 
 Transport.prototype.open = function () {
@@ -1005,7 +1005,7 @@ function empty () { }
  * JSONP Polling constructor.
  *
  * @param {Object} opts.
- * @api static
+ * @api client
  */
 
 function JSONPPolling (opts) {
@@ -1231,7 +1231,7 @@ function empty(){}
  * XHR Polling constructor.
  *
  * @param {Object} opts
- * @api static
+ * @api client
  */
 
 function XHR(opts){
@@ -1282,7 +1282,7 @@ XHR.prototype.request = function(opts){
   opts.supportsBinary = this.supportsBinary;
   opts.enablesXDR = this.enablesXDR;
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   opts.pfx = this.pfx;
   opts.key = this.key;
   opts.passphrase = this.passphrase;
@@ -1291,7 +1291,7 @@ XHR.prototype.request = function(opts){
   opts.ciphers = this.ciphers;
   opts.rejectUnauthorized = this.rejectUnauthorized;
 
-  // other options for Node.js client
+  // other options for Node.javascript client
   opts.extraHeaders = this.extraHeaders;
 
   return new Request(opts);
@@ -1339,7 +1339,7 @@ XHR.prototype.doPoll = function(){
  * Request constructor
  *
  * @param {Object} options
- * @api static
+ * @api client
  */
 
 function Request(opts){
@@ -1354,7 +1354,7 @@ function Request(opts){
   this.supportsBinary = opts.supportsBinary;
   this.enablesXDR = opts.enablesXDR;
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   this.pfx = opts.pfx;
   this.key = opts.key;
   this.passphrase = opts.passphrase;
@@ -1363,7 +1363,7 @@ function Request(opts){
   this.ciphers = opts.ciphers;
   this.rejectUnauthorized = opts.rejectUnauthorized;
 
-  // other options for Node.js client
+  // other options for Node.javascript client
   this.extraHeaders = opts.extraHeaders;
 
   this.create();
@@ -1384,7 +1384,7 @@ Emitter(Request.prototype);
 Request.prototype.create = function(){
   var opts = { agent: this.agent, xdomain: this.xd, xscheme: this.xs, enablesXDR: this.enablesXDR };
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   opts.pfx = this.pfx;
   opts.key = this.key;
   opts.passphrase = this.passphrase;
@@ -1586,7 +1586,7 @@ Request.prototype.hasXDR = function(){
 /**
  * Aborts the request.
  *
- * @api static
+ * @api client
  */
 
 Request.prototype.abort = function(){
@@ -1731,7 +1731,7 @@ Polling.prototype.pause = function(onPause){
 /**
  * Starts polling cycle.
  *
- * @api static
+ * @api client
  */
 
 Polling.prototype.poll = function(){
@@ -1904,7 +1904,7 @@ module.exports = WS;
  * WebSocket transport constructor.
  *
  * @api {Object} connection options
- * @api static
+ * @api client
  */
 
 function WS(opts){
@@ -1925,7 +1925,7 @@ inherit(WS, Transport);
 /**
  * Transport name.
  *
- * @api static
+ * @api client
  */
 
 WS.prototype.name = 'websocket';
@@ -1956,7 +1956,7 @@ WS.prototype.doOpen = function(){
     perMessageDeflate: this.perMessageDeflate
   };
 
-  // SSL options for Node.js client
+  // SSL options for Node.javascript client
   opts.pfx = this.pfx;
   opts.key = this.key;
   opts.passphrase = this.passphrase;
@@ -2151,7 +2151,7 @@ WS.prototype.uri = function(){
  * Feature detection for WebSocket.
  *
  * @return {Boolean} whether this transport is available.
- * @api static
+ * @api client
  */
 
 WS.prototype.check = function(){
@@ -2232,7 +2232,7 @@ function noop() {}
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
  *
- * @api static
+ * @api client
  */
 
 module.exports = function(arraybuffer, start, end) {
@@ -2430,7 +2430,7 @@ module.exports = Emitter;
 /**
  * Initialize a new `Emitter`.
  *
- * @api static
+ * @api client
  */
 
 function Emitter(obj) {
@@ -2458,7 +2458,7 @@ function mixin(obj) {
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.on =
@@ -2476,7 +2476,7 @@ Emitter.prototype.addEventListener = function(event, fn){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.once = function(event, fn){
@@ -2500,7 +2500,7 @@ Emitter.prototype.once = function(event, fn){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.off =
@@ -2565,7 +2565,7 @@ Emitter.prototype.emit = function(event){
  *
  * @param {String} event
  * @return {Array}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.listeners = function(event){
@@ -2578,7 +2578,7 @@ Emitter.prototype.listeners = function(event){
  *
  * @param {String} event
  * @return {Boolean}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.hasListeners = function(event){
@@ -2655,7 +2655,7 @@ exports.formatters.j = function(v) {
 /**
  * Colorize log arguments if enabled.
  *
- * @api static
+ * @api client
  */
 
 function formatArgs() {
@@ -2697,7 +2697,7 @@ function formatArgs() {
  * Invokes `console.log()` when available.
  * No-op when `console.log` is not a "function".
  *
- * @api static
+ * @api client
  */
 
 function log() {
@@ -2766,7 +2766,7 @@ function localstorage(){
 },{"./debug":18}],18:[function(_dereq_,module,exports){
 
 /**
- * This is the common logic for both the Node.js and web browser
+ * This is the common logic for both the Node.javascript and web browser
  * implementations of `debug()`.
  *
  * Expose `debug()` as the module.
@@ -2822,7 +2822,7 @@ function selectColor() {
  *
  * @param {String} namespace
  * @return {Function}
- * @api static
+ * @api client
  */
 
 function debug(namespace) {
@@ -2896,7 +2896,7 @@ function debug(namespace) {
  * separated by a colon and wildcards.
  *
  * @param {String} namespaces
- * @api static
+ * @api client
  */
 
 function enable(namespaces) {
@@ -2919,7 +2919,7 @@ function enable(namespaces) {
 /**
  * Disable debug output.
  *
- * @api static
+ * @api client
  */
 
 function disable() {
@@ -2931,7 +2931,7 @@ function disable() {
  *
  * @param {String} name
  * @return {Boolean}
- * @api static
+ * @api client
  */
 
 function enabled(name) {
@@ -3317,7 +3317,7 @@ function map(ary, each, done) {
  * decoded from their base64 representation
  *
  * @param {String} data, callback method
- * @api static
+ * @api client
  */
 
 exports.decodePayload = function (data, binaryType, callback) {
@@ -3501,7 +3501,7 @@ exports.encodePayloadAsBlob = function(packets, callback) {
  * description of encodePayloadAsBinary
  *
  * @param {ArrayBuffer} data, callback method
- * @api static
+ * @api client
  */
 
 exports.decodePayloadAsBinary = function (data, binaryType, callback) {
@@ -3602,7 +3602,7 @@ module.exports = hasBinary;
  * Right now only Buffer and ArrayBuffer are supported..
  *
  * @param {Object} anything
- * @api static
+ * @api client
  */
 
 function hasBinary(data) {
@@ -3699,7 +3699,7 @@ var y = d * 365.25;
  * @param {String|Number} val
  * @param {Object} options
  * @return {String|Number}
- * @api static
+ * @api client
  */
 
 module.exports = function(val, options){
@@ -3932,7 +3932,7 @@ module.exports = function parseuri(str) {
 	var freeModule = typeof module == 'object' && module &&
 		module.exports == freeExports && module;
 
-	// Detect free variable `global`, from Node.js or Browserified code,
+	// Detect free variable `global`, from Node.javascript or Browserified code,
 	// and use it as `root`
 	var freeGlobal = typeof global == 'object' && global;
 	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
@@ -4141,7 +4141,7 @@ module.exports = function parseuri(str) {
 		'decode': utf8decode
 	};
 
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// Some AMD build optimizers, like r.javascript, check for specific condition patterns
 	// like the following:
 	if (
 		typeof define == 'function' &&
@@ -4152,7 +4152,7 @@ module.exports = function parseuri(str) {
 			return utf8;
 		});
 	}	else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+		if (freeModule) { // in Node.javascript or RingoJS v0.8.0+
 			freeModule.exports = utf8;
 		} else { // in Narwhal or RingoJS v0.7.0-
 			var object = {};
@@ -4183,7 +4183,7 @@ var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_
  *
  * @param {Number} num The number to convert.
  * @returns {String} The string representation of the number.
- * @api static
+ * @api client
  */
 function encode(num) {
   var encoded = '';
@@ -4201,7 +4201,7 @@ function encode(num) {
  *
  * @param {String} str The string to convert.
  * @returns {Number} The integer value represented by the string.
- * @api static
+ * @api client
  */
 function decode(str) {
   var decoded = 0;
@@ -4217,7 +4217,7 @@ function decode(str) {
  * Yeast: A tiny growing id generator.
  *
  * @returns {String} A unique id.
- * @api static
+ * @api client
  */
 function yeast() {
   var now = encode(+new Date());
@@ -4271,7 +4271,7 @@ var cache = exports.managers = {};
  * We reuse the existing instance based on same scheme/port/host,
  * and we initialize sockets for each namespace.
  *
- * @api static
+ * @api client
  */
 
 function lookup(uri, opts) {
@@ -4309,7 +4309,7 @@ function lookup(uri, opts) {
 /**
  * Protocol version.
  *
- * @api static
+ * @api client
  */
 
 exports.protocol = parser.protocol;
@@ -4318,7 +4318,7 @@ exports.protocol = parser.protocol;
  * `connect`.
  *
  * @param {String} uri
- * @api static
+ * @api client
  */
 
 exports.connect = lookup;
@@ -4326,7 +4326,7 @@ exports.connect = lookup;
 /**
  * Expose constructors for standalone build.
  *
- * @api static
+ * @api client
  */
 
 exports.Manager = _dereq_('./manager');
@@ -4365,7 +4365,7 @@ module.exports = Manager;
  *
  * @param {String} engine instance or engine uri/opts
  * @param {Object} options
- * @api static
+ * @api client
  */
 
 function Manager(uri, opts){
@@ -4443,7 +4443,7 @@ Emitter(Manager.prototype);
  *
  * @param {Boolean} true/false if it should automatically reconnect
  * @return {Manager} self or value
- * @api static
+ * @api client
  */
 
 Manager.prototype.reconnection = function(v){
@@ -4457,7 +4457,7 @@ Manager.prototype.reconnection = function(v){
  *
  * @param {Number} max reconnection attempts before giving up
  * @return {Manager} self or value
- * @api static
+ * @api client
  */
 
 Manager.prototype.reconnectionAttempts = function(v){
@@ -4471,7 +4471,7 @@ Manager.prototype.reconnectionAttempts = function(v){
  *
  * @param {Number} delay
  * @return {Manager} self or value
- * @api static
+ * @api client
  */
 
 Manager.prototype.reconnectionDelay = function(v){
@@ -4493,7 +4493,7 @@ Manager.prototype.randomizationFactor = function(v){
  *
  * @param {Number} delay
  * @return {Manager} self or value
- * @api static
+ * @api client
  */
 
 Manager.prototype.reconnectionDelayMax = function(v){
@@ -4507,7 +4507,7 @@ Manager.prototype.reconnectionDelayMax = function(v){
  * Sets the connection timeout. `false` to disable
  *
  * @return {Manager} self or value
- * @api static
+ * @api client
  */
 
 Manager.prototype.timeout = function(v){
@@ -4537,7 +4537,7 @@ Manager.prototype.maybeReconnectOnOpen = function() {
  *
  * @param {Function} optional, callback
  * @return {Manager} self
- * @api static
+ * @api client
  */
 
 Manager.prototype.open =
@@ -4683,7 +4683,7 @@ Manager.prototype.onerror = function(err){
  * Creates a new socket for the given `nsp`.
  *
  * @return {Socket}
- * @api static
+ * @api client
  */
 
 Manager.prototype.socket = function(nsp){
@@ -4905,7 +4905,7 @@ module.exports = on;
  * @param {Object|EventEmitter} obj with `Emitter` mixin or `EventEmitter`
  * @param {String} event name
  * @param {Function} callback
- * @api static
+ * @api client
  */
 
 function on(obj, ev, fn) {
@@ -4969,7 +4969,7 @@ var emit = Emitter.prototype.emit;
 /**
  * `Socket` constructor.
  *
- * @api static
+ * @api client
  */
 
 function Socket(io, nsp){
@@ -5011,7 +5011,7 @@ Socket.prototype.subEvents = function() {
 /**
  * "Opens" the socket.
  *
- * @api static
+ * @api client
  */
 
 Socket.prototype.open =
@@ -5029,7 +5029,7 @@ Socket.prototype.connect = function(){
  * Sends a `message` event.
  *
  * @return {Socket} self
- * @api static
+ * @api client
  */
 
 Socket.prototype.send = function(){
@@ -5045,7 +5045,7 @@ Socket.prototype.send = function(){
  *
  * @param {String} event name
  * @return {Socket} self
- * @api static
+ * @api client
  */
 
 Socket.prototype.emit = function(ev){
@@ -5297,7 +5297,7 @@ Socket.prototype.destroy = function(){
  * Disconnects the socket manually.
  *
  * @return {Socket} self
- * @api static
+ * @api client
  */
 
 Socket.prototype.close =
@@ -5322,7 +5322,7 @@ Socket.prototype.disconnect = function(){
  *
  * @param {Boolean} if `true`, compresses the sending data
  * @return {Socket} self
- * @api static
+ * @api client
  */
 
 Socket.prototype.compress = function(compress){
@@ -5353,7 +5353,7 @@ module.exports = url;
  * @param {String} url
  * @param {Object} An object meant to mimic window.location.
  *                 Defaults to window.location.
- * @api static
+ * @api client
  */
 
 function url(uri, loc){
@@ -5428,7 +5428,7 @@ module.exports = Backoff;
  * - `factor` [2]
  *
  * @param {Object} opts
- * @api static
+ * @api client
  */
 
 function Backoff(opts) {
@@ -5444,7 +5444,7 @@ function Backoff(opts) {
  * Return the backoff duration.
  *
  * @return {Number}
- * @api static
+ * @api client
  */
 
 Backoff.prototype.duration = function(){
@@ -5460,7 +5460,7 @@ Backoff.prototype.duration = function(){
 /**
  * Reset the number of attempts.
  *
- * @api static
+ * @api client
  */
 
 Backoff.prototype.reset = function(){
@@ -5470,7 +5470,7 @@ Backoff.prototype.reset = function(){
 /**
  * Set the minimum duration
  *
- * @api static
+ * @api client
  */
 
 Backoff.prototype.setMin = function(min){
@@ -5480,7 +5480,7 @@ Backoff.prototype.setMin = function(min){
 /**
  * Set the maximum duration
  *
- * @api static
+ * @api client
  */
 
 Backoff.prototype.setMax = function(max){
@@ -5490,7 +5490,7 @@ Backoff.prototype.setMax = function(max){
 /**
  * Set the jitter
  *
- * @api static
+ * @api client
  */
 
 Backoff.prototype.setJitter = function(jitter){
@@ -5511,7 +5511,7 @@ var slice = [].slice;
  * @param {Object} obj
  * @param {Function|String} fn or string
  * @return {Function}
- * @api static
+ * @api client
  */
 
 module.exports = function(obj, fn){
@@ -5534,7 +5534,7 @@ module.exports = Emitter;
 /**
  * Initialize a new `Emitter`.
  *
- * @api static
+ * @api client
  */
 
 function Emitter(obj) {
@@ -5562,7 +5562,7 @@ function mixin(obj) {
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.on =
@@ -5580,7 +5580,7 @@ Emitter.prototype.addEventListener = function(event, fn){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.once = function(event, fn){
@@ -5601,7 +5601,7 @@ Emitter.prototype.once = function(event, fn){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.off =
@@ -5666,7 +5666,7 @@ Emitter.prototype.emit = function(event){
  *
  * @param {String} event
  * @return {Array}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.listeners = function(event){
@@ -5679,7 +5679,7 @@ Emitter.prototype.listeners = function(event){
  *
  * @param {String} event
  * @return {Boolean}
- * @api static
+ * @api client
  */
 
 Emitter.prototype.hasListeners = function(event){
@@ -5711,7 +5711,7 @@ module.exports = hasBinary;
  * Right now only Buffer and ArrayBuffer are supported..
  *
  * @param {Object} anything
- * @api static
+ * @api client
  */
 
 function hasBinary(data) {
@@ -5779,7 +5779,7 @@ var isBuf = _dereq_('./is-buffer');
  *
  * @param {Object} packet - socket.io event packet
  * @return {Object} with deconstructed packet and list of buffers
- * @api static
+ * @api client
  */
 
 exports.deconstructPacket = function(packet){
@@ -5821,7 +5821,7 @@ exports.deconstructPacket = function(packet){
  * @param {Object} packet - event packet with placeholders
  * @param {Array} buffers - binary buffers to put in placeholder positions
  * @return {Object} reconstructed packet
- * @api static
+ * @api client
  */
 
 exports.reconstructPacket = function(packet, buffers) {
@@ -5922,7 +5922,7 @@ var isBuf = _dereq_('./is-buffer');
 /**
  * Protocol version.
  *
- * @api static
+ * @api client
  */
 
 exports.protocol = 4;
@@ -5930,7 +5930,7 @@ exports.protocol = 4;
 /**
  * Packet types.
  *
- * @api static
+ * @api client
  */
 
 exports.types = [
@@ -5946,7 +5946,7 @@ exports.types = [
 /**
  * Packet type `connect`.
  *
- * @api static
+ * @api client
  */
 
 exports.CONNECT = 0;
@@ -5954,7 +5954,7 @@ exports.CONNECT = 0;
 /**
  * Packet type `disconnect`.
  *
- * @api static
+ * @api client
  */
 
 exports.DISCONNECT = 1;
@@ -5962,7 +5962,7 @@ exports.DISCONNECT = 1;
 /**
  * Packet type `event`.
  *
- * @api static
+ * @api client
  */
 
 exports.EVENT = 2;
@@ -5970,7 +5970,7 @@ exports.EVENT = 2;
 /**
  * Packet type `ack`.
  *
- * @api static
+ * @api client
  */
 
 exports.ACK = 3;
@@ -5978,7 +5978,7 @@ exports.ACK = 3;
 /**
  * Packet type `error`.
  *
- * @api static
+ * @api client
  */
 
 exports.ERROR = 4;
@@ -5986,7 +5986,7 @@ exports.ERROR = 4;
 /**
  * Packet type 'binary event'
  *
- * @api static
+ * @api client
  */
 
 exports.BINARY_EVENT = 5;
@@ -5994,7 +5994,7 @@ exports.BINARY_EVENT = 5;
 /**
  * Packet type `binary ack`. For acks with binary arguments.
  *
- * @api static
+ * @api client
  */
 
 exports.BINARY_ACK = 6;
@@ -6002,7 +6002,7 @@ exports.BINARY_ACK = 6;
 /**
  * Encoder constructor.
  *
- * @api static
+ * @api client
  */
 
 exports.Encoder = Encoder;
@@ -6010,7 +6010,7 @@ exports.Encoder = Encoder;
 /**
  * Decoder constructor.
  *
- * @api static
+ * @api client
  */
 
 exports.Decoder = Decoder;
@@ -6018,7 +6018,7 @@ exports.Decoder = Decoder;
 /**
  * A socket.io Encoder instance
  *
- * @api static
+ * @api client
  */
 
 function Encoder() {}
@@ -6030,7 +6030,7 @@ function Encoder() {}
  * @param {Object} obj - packet object
  * @param {Function} callback - function to handle encodings (likely engine.write)
  * @return Calls callback with Array of encodings
- * @api static
+ * @api client
  */
 
 Encoder.prototype.encode = function(obj, callback){
@@ -6120,7 +6120,7 @@ function encodeAsBinary(obj, callback) {
  * A socket.io Decoder instance
  *
  * @return {Object} decoder
- * @api static
+ * @api client
  */
 
 function Decoder() {
@@ -6138,7 +6138,7 @@ Emitter(Decoder.prototype);
  *
  * @param {String} obj - encoded packet
  * @return {Object} packet
- * @api static
+ * @api client
  */
 
 Decoder.prototype.add = function(obj) {
@@ -6246,7 +6246,7 @@ function decodeString(str) {
 /**
  * Deallocates a parser's resources
  *
- * @api static
+ * @api client
  */
 
 Decoder.prototype.destroy = function() {
@@ -6332,7 +6332,7 @@ arguments[4][15][0].apply(exports,arguments)
 /*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
-  // strict `define` check is necessary for compatibility with `r.js`.
+  // strict `define` check is necessary for compatibility with `r.javascript`.
   var isLoader = typeof define === "function" && define.amd;
 
   // A set of types used to distinguish objects from primitives.

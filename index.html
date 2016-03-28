@@ -4,29 +4,21 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-
     <link rel="stylesheet" href="/css/style.css">
+
     <script src="socket.io/socket.io.js"></script>
-
-    <script>
-        var socket = io.connect('http://localhost:8080');
-        socket.emit('messages', 'Hello Server!');
-
-        socket.on('connect', function (data) {
-            var nickname = prompt('What\'s your name?')
-            hello = nickname;
-        });
-
-        socket.on('messages', function(data){
-            hello = data.hello;
-        });
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="/javascript/client.js"></script>
 </head>
 
 <body>
 <section>
-    Hello message: {{ hello }}
+    <div>
+        Hello message: <span id="hello"></span>
+    </div>
+
+    <ul class='block-list'></ul>
+
 </section>
 </body>
 </html>
