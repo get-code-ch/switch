@@ -12,13 +12,25 @@
 </head>
 
 <body>
+
 <section>
     <div>
-        Hello message: <span id="hello"></span>
+        Server: <span id="servername"></span><br>
+        GPIO : <span id="gpio"></span><br>
+        State : <span id="state"></span><br>
     </div>
-
-    <ul class='block-list'></ul>
+    <form>
+        GPIO : <select id="gpioIn">
+                    <option value="12">12</option>
+                    <option value="16" selected="selected">16</option>
+               </select>
+    </form>
+    <svg  width="100" height="100">
+        <circle onclick="circle_click(evt, 0)" cx="50" cy="25" r="10" fill="red"></circle>
+        <circle onclick="circle_click(evt, 1)" cx="80" cy="25" r="10" fill="green"></circle>
+    </svg>
 
 </section>
+
 </body>
 </html>
