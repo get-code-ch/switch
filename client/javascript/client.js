@@ -1,24 +1,22 @@
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('http://' + window.location.hostname + ':8080');
 
 $(document).ready(function(){
-    $('.block-list').clear;
-    $.get('/blocks', appendToList);
 });
-
-function appendToList(blocks){
-    var list = [];
-    for(var i in  blocks){
-        list.push($('<li>', { text: blocks[i]}));
-    }
-    $('.block-list').append(list);
-}
-
-
-
-socket.emit('messages', 'Hello Server!');
 
 socket.on('connect', function (data) {
-    var nickname = prompt('What\'s your name?');
-    $('#hello').text(nickname);
-    socket.emit('messages', 'Client nickname ' + nickname);
+    //socket.emit('gpiostatus', {gpio: 16})
 });
+
+socket.on('gpiostatus', function (data) {
+    console.log('gpiostatus :' + JSON.stringify(data));
+    $('#servername').text(data.servername);
+    $('#gpio').text(data.gpio);
+    $('#state').text(data.state);
+});
+
+function circle_click(evt, state) {
+    var lst = document.getElementById('gpioIn');
+    var gpioIn = lst.options[lst.selectedIndex].text;
+    console.log(gpioIn);
+    state ? socket.emit('on', {gpio: gpioIn}) : socket.emit('off', {gpio: gpioIn});
+}
