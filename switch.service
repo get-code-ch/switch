@@ -4,6 +4,7 @@ Description=switch
 [Service]
 ExecStart=/usr/local/bin/node /opt/switch/app.js
 WorkingDirectory=/opt/switch/
+Group=switchgrp
 Restart=always
 StandardOutput=syslog
 SyslogIdentifier=switch
