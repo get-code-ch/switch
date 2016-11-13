@@ -1,0 +1,13 @@
+[Unit]
+Description=switch
+
+[Service]
+ExecStart=/usr/local/bin/node /opt/switch/app.js
+WorkingDirectory=/opt/switch/
+Restart=always
+StandardOutput=syslog
+SyslogIdentifier=switch
+
+[Install]
+WantedBy=multi-user.target
+Alias=switch

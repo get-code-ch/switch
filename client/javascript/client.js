@@ -20,3 +20,10 @@ function circle_click(evt, state) {
     console.log(gpioIn);
     state ? socket.emit('on', {gpio: gpioIn}) : socket.emit('off', {gpio: gpioIn});
 }
+
+function gpioIn_change() {
+    var lst = document.getElementById('gpioIn');
+    var gpioIn = lst.options[lst.selectedIndex].text;
+    console.log(gpioIn);
+    //socket.emit('gpiostatus', {gpio: gpioIn});
+}
