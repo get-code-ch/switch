@@ -14,14 +14,16 @@ app.use(logger);
 app.use(express.static('client'));
 app.use(express.static('socket.io'));
 
-var server = require('http').createServer(app);
+var server = require('http').createServer(app);8
 var io = require('socket.io')(server);
+var gpioArray = [];
 
 io.on('connection', function (socket) {
+
     console.log('Client connected... ');
 
     socket.on('gpiostatus', function (data) {
-        rpio.open(data.gpio, rpio.OUTPUT, rpio.LOW);
+        rpio.open(data.gpio, rpio.OUTPUT);
         socket.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
     });
 
@@ -39,6 +41,24 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
         socket.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
     });
+
+    socket.on('timer', function (data) {
+
+        if (data.interval > 0) {
+            clearInterval(gpioArray[data.gpio]);
+            gpioArray[data.gpio] = gpioArray[data.gpio] = setInterval(function () {
+                console.log(data);
+                rpio.open(data.gpio, rpio.OUTPUT);
+                rpio.write(data.gpio, (rpio.read(data.gpio) -1) * -1);
+                socket.broadcast.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
+                socket.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
+            }, 1000 * data.interval);
+        } else {
+            clearInterval(gpioArray[data.gpio]);
+        }
+
+    });
+
 
 });
 
