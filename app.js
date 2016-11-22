@@ -14,7 +14,7 @@ app.use(logger);
 app.use(express.static('client'));
 app.use(express.static('socket.io'));
 
-var server = require('http').createServer(app);8
+var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var gpioArray = [];
 
