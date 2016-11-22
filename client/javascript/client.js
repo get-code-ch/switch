@@ -14,7 +14,7 @@ socket.on('gpiostatus', function (data) {
     $('#state').text(data.state);
 });
 
-function circle_click(evt, state) {
+function state_change_click(evt, state) {
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
     console.log(gpioIn);
@@ -26,4 +26,13 @@ function gpioIn_change() {
     var gpioIn = lst.options[lst.selectedIndex].text;
     console.log(gpioIn);
     //socket.emit('gpiostatus', {gpio: gpioIn});
+}
+
+function timer_save_click() {
+    var interval = document.getElementById('interval');
+    var lst = document.getElementById('gpioIn');
+    var gpioIn = lst.options[lst.selectedIndex].text;
+    socket.emit('timer', {gpio: gpioIn, interval: interval.value});
+    console.log(interval.value);
+
 }
