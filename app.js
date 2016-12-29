@@ -23,7 +23,8 @@ io.on('connection', function (socket) {
     console.log('Client connected... ');
 
     socket.on('gpiostatus', function (data) {
-        rpio.open(data.gpio, rpio.OUTPUT);
+        console.log(data);
+        rpio.open(data.gpio, rpio.INPUT);
         socket.emit('gpiostatus', {servername: os.hostname(), gpio: data.gpio, state: rpio.read(data.gpio)});
     });
 
