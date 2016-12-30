@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="claude">
     <words>
+      <w>gpio</w>
       <w>gpiostatus</w>
+      <w>servername</w>
     </words>
   </dictionary>
 </component>
