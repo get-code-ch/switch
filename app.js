@@ -18,6 +18,10 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var gpioArray = [];
 
+rpio.open(12, rpio.OUTPUT);
+rpio.open(16, rpio.OUTPUT);
+
+
 function broadcastStatus(socket, gpio) {
   data = {servername: os.hostname(), gpio: gpio, state: rpio.read(gpio)};
 
@@ -30,7 +34,6 @@ io.on('connection', function (socket) {
 
   socket.on('send', function (data) {
     //console.log(data);
-    rpio.open(data.gpio, rpio.OUTPUT);
 
     switch (data.cmd.toUpperCase()) {
       case 'TIMER':
@@ -55,7 +58,6 @@ io.on('connection', function (socket) {
 
   socket.on('get', function (data) {
     //console.log(data);
-    rpio.open(data.gpio, rpio.INPUT);
 
     switch (data.cmd.toUpperCase()) {
       case 'STATE':
