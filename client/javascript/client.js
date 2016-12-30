@@ -4,7 +4,8 @@ $(document).ready(function(){
 });
 
 socket.on('connect', function (data) {
-    //socket.emit('gpiostatus', {gpio: 16})
+  socket.emit('get', {gpio: 12, cmd: 'state'});
+  socket.emit('get', {gpio: 16, cmd: 'state'});
 });
 
 socket.on('gpiostatus', function (data) {
@@ -18,21 +19,20 @@ function state_change_click(evt, state) {
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
     console.log(gpioIn);
-    state ? socket.emit('on', {gpio: gpioIn}) : socket.emit('off', {gpio: gpioIn});
+    state ? socket.emit('send', {gpio: gpioIn, 'cmd': 'state', value: 'ON'}) : socket.emit('send', {gpio: gpioIn, 'cmd': 'state', value: 'OFF'});
 }
 
 function gpioIn_change() {
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
-    console.log(gpioIn);
-    //socket.emit('gpiostatus', {gpio: gpioIn});
+    socket.emit('get', {gpio: gpioIn, cmd: 'state'});
 }
 
 function timer_save_click() {
     var interval = document.getElementById('interval');
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
-    socket.emit('timer', {gpio: gpioIn, interval: interval.value});
+    socket.emit('send', {gpio: gpioIn, cmd: 'timer', value: interval.value});
     console.log(interval.value);
 
 }
