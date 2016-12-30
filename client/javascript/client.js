@@ -33,6 +33,4 @@ function timer_save_click() {
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
     socket.emit('send', {gpio: gpioIn, cmd: 'timer', value: interval.value});
-    console.log(interval.value);
-
 }
