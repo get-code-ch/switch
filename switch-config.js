@@ -13,4 +13,10 @@ SwitchConfig.prototype.getConfig = function() {
   return this.data;
 }
 
+SwitchConfig.prototype.updateConfig = function(data) {
+  this.data = data;
+  fs.writeFileSync('switch.conf', '{ "data":' + JSON.stringify(data) + '}');
+  return this.data;
+}
+
 module.exports = SwitchConfig;
