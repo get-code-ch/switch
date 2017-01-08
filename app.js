@@ -22,14 +22,13 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var gpioArray = [];
 
-console.log(conf.gpios);
 for (var i=0; i < conf.gpios.length; i++) {
   rpio.open(conf.gpios[i].id, rpio.OUTPUT);
   rpio.write(conf.gpios[i].id, conf.gpios[i].state ? 1 : 0);
 }
 
 function broadcastStatus(socket, gpio) {
-  data = {server: os.hostname(), gpio: gpio, state: rpio.read(gpio) === 1 };
+  data = {server: os.hostname(), gpio: Number(gpio), state: rpio.read(gpio) === 1 };
 
   socket.broadcast.emit('gpiostatus', data);
   socket.emit('gpiostatus', data);
@@ -38,8 +37,12 @@ function broadcastStatus(socket, gpio) {
 io.on('connection', function (socket) {
   console.log('Client connected... ');
 
-  socket.on('send', function (data) {
+  socket.on('set', function (data) {
     //console.log(data);
+
+    let i = conf.gpios.findIndex(element => element.id === data.gpio);
+    console.log("i set: " + i);
+
 
     switch (data.cmd.toUpperCase()) {
       case 'TIMER':
@@ -64,6 +67,11 @@ io.on('connection', function (socket) {
 
   socket.on('get', function (data) {
     //console.log(data);
+
+    let i = conf.gpios.findIndex(element => element.id === data.gpio);
+    if (i === -1) {
+      rpio.open(data.gpio, rpio.OUTPUT);
+    }
 
     switch (data.cmd.toUpperCase()) {
       case 'STATE':

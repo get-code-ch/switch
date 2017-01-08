@@ -19,7 +19,7 @@ function state_change_click(evt, state) {
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
     console.log(gpioIn);
-    state ? socket.emit('send', {gpio: gpioIn, 'cmd': 'state', value: 'ON'}) : socket.emit('send', {gpio: gpioIn, 'cmd': 'state', value: 'OFF'});
+    state ? socket.emit('set', {gpio: gpioIn, 'cmd': 'state', value: 'ON'}) : socket.emit('set', {gpio: gpioIn, 'cmd': 'state', value: 'OFF'});
 }
 
 function gpioIn_change() {
@@ -32,5 +32,5 @@ function timer_save_click() {
     var interval = document.getElementById('interval');
     var lst = document.getElementById('gpioIn');
     var gpioIn = lst.options[lst.selectedIndex].text;
-    socket.emit('send', {gpio: gpioIn, cmd: 'timer', value: interval.value});
+    socket.emit('set', {gpio: gpioIn, cmd: 'timer', value: interval.value});
 }
