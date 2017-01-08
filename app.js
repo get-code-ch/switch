@@ -7,6 +7,10 @@ var rpio = require('rpio');
 var express = require('express');
 var logger = require('./logger');
 
+var SwitchConfig = require('./switch-config');
+var confObject = new SwitchConfig();
+var conf = confObject.getConfig().data;
+
 var app = express();
 
 // defining client folder
@@ -18,12 +22,14 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var gpioArray = [];
 
-rpio.open(12, rpio.OUTPUT);
-rpio.open(16, rpio.OUTPUT);
-
+console.log(conf.gpios);
+for (var i=0; i < conf.gpios.length; i++) {
+  rpio.open(conf.gpios[i].id, rpio.OUTPUT);
+  rpio.write(conf.gpios[i].id, conf.gpios[i].state ? 1 : 0);
+}
 
 function broadcastStatus(socket, gpio) {
-  data = {servername: os.hostname(), gpio: gpio, state: rpio.read(gpio)};
+  data = {server: os.hostname(), gpio: gpio, state: rpio.read(gpio) === 1 };
 
   socket.broadcast.emit('gpiostatus', data);
   socket.emit('gpiostatus', data);
