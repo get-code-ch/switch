@@ -6,6 +6,7 @@ var rpio = require('rpio');
 
 var express = require('express');
 var logger = require('./logger');
+var cors = require('cors');
 
 var SwitchConfig = require('./switch-config');
 var confObject = new SwitchConfig();
@@ -13,8 +14,10 @@ var conf = confObject.getConfig().data;
 
 var app = express();
 
-// defining client folder
+
+app.use(cors());
 app.use(logger);
+// defining client folder
 app.use(express.static('client'));
 app.use(express.static('socket.io'));
 app.use(express.static('./'));
@@ -42,8 +45,15 @@ io.on('connection', function (socket) {
     //console.log(data);
 
     let i = conf.gpios.findIndex(element => element.id === data.gpio);
-    console.log("i set: " + i);
-
+    if (i === -1) {
+      rpio.open(data.gpio, rpio.OUTPUT);
+      let newpin = {};
+      newpin.id = data.gpio;
+      ("<description>" in data) ? newpin.description = data.description : newpin.description = 'N/D';
+      ("<state>" in data)  ? newpin.state = data.state : newpin.state = false;
+      conf.gpios.push(newpin);
+      confObject.updateConfig(conf);
+    }
 
     switch (data.cmd.toUpperCase()) {
       case 'TIMER':
@@ -72,6 +82,12 @@ io.on('connection', function (socket) {
     let i = conf.gpios.findIndex(element => element.id === data.gpio);
     if (i === -1) {
       rpio.open(data.gpio, rpio.OUTPUT);
+      let newpin = {};
+      newpin.id = data.gpio;
+      ("<description>" in data) ? newpin.description = data.description : newpin.description = 'N/D';
+      ("<state>" in data)  ? newpin.state = data.state : newpin.state = false;
+      conf.gpios.push(newpin);
+      confObject.updateConfig(conf);
     }
 
     switch (data.cmd.toUpperCase()) {
