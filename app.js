@@ -2,17 +2,17 @@
  * Created by claude on 04.03.16.
  */
 const os = require('os');
-var rpio = require('rpio');
+let rpio = require('rpio');
 
-var express = require('express');
-var logger = require('./logger');
-var cors = require('cors');
+let express = require('express');
+let logger = require('./logger');
+let cors = require('cors');
 
-var SwitchConfig = require('./switch-config');
-var confObject = new SwitchConfig();
-var conf = confObject.getConfig().data;
+let SwitchConfig = require('./switch-config');
+let confObject = new SwitchConfig();
+let conf = confObject.getConfig().data;
 
-var app = express();
+let app = express();
 
 
 app.use(cors());
@@ -22,17 +22,17 @@ app.use(express.static('client'));
 app.use(express.static('socket.io'));
 app.use(express.static('./'));
 
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var gpioArray = [];
+let server = require('http').createServer(app);
+let io = require('socket.io')(server);
+let gpioArray = [];
 
-for (var i=0; i < conf.gpios.length; i++) {
-  rpio.open(conf.gpios[i].id, rpio.OUTPUT);
-  rpio.write(conf.gpios[i].id, conf.gpios[i].state ? 1 : 0);
-}
+conf.gpios.filter(element => {
+  rpio.open(element.id, rpio.OUTPUT);
+  rpio.write(element.id, element.state ? 1 : 0);
+});
 
-function broadcastStatus(socket, gpio) {
-  data = {server: os.hostname(), gpio: Number(gpio), state: rpio.read(gpio) === 1 };
+function broadcastStatus(socket, data) {
+  data = {server: os.hostname(), gpio: Number(data.gpio), state: rpio.read(data.gpio) === 1, description: data.description};
 
   socket.broadcast.emit('gpiostatus', data);
   socket.emit('gpiostatus', data);
@@ -49,8 +49,8 @@ io.on('connection', function (socket) {
       rpio.open(data.gpio, rpio.OUTPUT);
       let newpin = {};
       newpin.id = data.gpio;
-      ("<description>" in data) ? newpin.description = data.description : newpin.description = 'N/D';
-      ("<state>" in data)  ? newpin.state = data.state : newpin.state = false;
+      ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
+      ("state" in data) ? newpin.state = data.state : newpin.state = false;
       conf.gpios.push(newpin);
       confObject.updateConfig(conf);
     }
@@ -68,12 +68,12 @@ io.on('connection', function (socket) {
         }
         break;
       case 'STATE':
-        (data.value == 1 || data.value.toUpperCase() == 'ON')  ? rpio.write(data.gpio, rpio.HIGH) : rpio.write(data.gpio, rpio.LOW);
+        (data.value == 1 || data.value.toUpperCase() == 'ON') ? rpio.write(data.gpio, rpio.HIGH) : rpio.write(data.gpio, rpio.LOW);
         break;
       default:
         break;
     }
-    broadcastStatus(socket, data.gpio);
+    broadcastStatus(socket, data);
   });
 
   socket.on('get', function (data) {
@@ -84,15 +84,15 @@ io.on('connection', function (socket) {
       rpio.open(data.gpio, rpio.OUTPUT);
       let newpin = {};
       newpin.id = data.gpio;
-      ("<description>" in data) ? newpin.description = data.description : newpin.description = 'N/D';
-      ("<state>" in data)  ? newpin.state = data.state : newpin.state = false;
+      ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
+      ("state" in data) ? newpin.state = data.state : newpin.state = false;
       conf.gpios.push(newpin);
       confObject.updateConfig(conf);
     }
 
     switch (data.cmd.toUpperCase()) {
       case 'STATE':
-        broadcastStatus(socket, data.gpio);
+        broadcastStatus(socket, data);
         break;
       default:
         break;
