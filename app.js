@@ -5,28 +5,27 @@ const os = require('os');
 let rpio = require('rpio');
 
 let express = require('express');
-let logger = require('./logger');
-let cors = require('cors');
-
-let SwitchConfig = require('./switch-config');
-let confObject = new SwitchConfig();
-let conf = confObject.getConfig().data;
-
 let app = express();
-
-
-app.use(cors());
-app.use(logger);
-// defining client folder
-app.use(express.static('client'));
-app.use(express.static('socket.io'));
 app.use(express.static('./'));
+//app.use(express.static('socket.io'));
+
+let logger = require('./logger');
+app.use(logger);
+
+let cors = require('cors');
+app.use(cors());
+
+let CConfig = require('./class/c-config');
+let confInstance = new CConfig();
+let configuration = confInstance.getConfig().data;
+
+
 
 let server = require('http').createServer(app);
 let io = require('socket.io')(server);
 let gpioArray = [];
 
-conf.gpios.filter(element => {
+configuration.gpios.filter(element => {
   rpio.open(element.id, rpio.OUTPUT);
   rpio.write(element.id, element.state ? 1 : 0);
 });
@@ -44,15 +43,15 @@ io.on('connection', function (socket) {
   socket.on('set', function (data) {
     //console.log(data);
 
-    let i = conf.gpios.findIndex(element => element.id === data.gpio);
+    let i = configuration.gpios.findIndex(element => element.id === data.gpio);
     if (i === -1) {
       rpio.open(data.gpio, rpio.OUTPUT);
       let newpin = {};
       newpin.id = data.gpio;
       ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
       ("state" in data) ? newpin.state = data.state : newpin.state = false;
-      conf.gpios.push(newpin);
-      confObject.updateConfig(conf);
+      configuration.gpios.push(newpin);
+      confObject.updateConfig(configuration);
     }
 
     switch (data.cmd.toUpperCase()) {
@@ -79,15 +78,15 @@ io.on('connection', function (socket) {
   socket.on('get', function (data) {
     //console.log(data);
 
-    let i = conf.gpios.findIndex(element => element.id === data.gpio);
+    let i = configuration.gpios.findIndex(element => element.id === data.gpio);
     if (i === -1) {
       rpio.open(data.gpio, rpio.OUTPUT);
       let newpin = {};
       newpin.id = data.gpio;
       ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
       ("state" in data) ? newpin.state = data.state : newpin.state = false;
-      conf.gpios.push(newpin);
-      confObject.updateConfig(conf);
+      configuration.gpios.push(newpin);
+      confObject.updateConfig(configuration);
     }
 
     switch (data.cmd.toUpperCase()) {
