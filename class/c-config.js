@@ -1,8 +1,8 @@
 let fs = require('fs');
 
-let CConfig = function () {
+function CConfig () {
   this._configuration = JSON.parse(fs.readFileSync('switch.conf'));
-  console.log(this._configuration);
+  console.log("CConfig constructor : " + JSON.stringify(this._configuration));
 };
 
 
@@ -27,7 +27,8 @@ CConfig.prototype.insertGpio = function (gpio) {
 };
 
 CConfig.prototype.isNewGpio = function (id) {
-  return (this._configuration.gpios.findIndex(element => element.id === id) === -1);
+  console.log("CConfig isNewGpio : " + JSON.stringify(this._configuration));
+  return (this._configuration.data.gpios.findIndex(element => element.id === id) === -1);
 };
 
 module.exports = CConfig;
