@@ -21,7 +21,7 @@ CConfig.prototype.insertGpio = function (gpio) {
   newPin.id = gpio.id;
   ("description" in gpio) ? newPin.description = gpio.description : newPin.description = 'N/D';
   ("state" in gpio) ? newPin.state = gpio.state : newPin.state = false;
-  this._configuration.gpios.push(newPin);
+  this._configuration.data.gpios.push(newPin);
   fs.writeFileSync('switch.conf', '{ "data":' + JSON.stringify(this._configuration) + '}');
   return this._configuration;
 };
