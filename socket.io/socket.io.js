@@ -22,7 +22,7 @@ module.exports.parser = _dereq_('engine.io-parser');
 
 var transports = _dereq_('./transports');
 var Emitter = _dereq_('component-emitter');
-var debug = _dereq_('debug')('engine.io-client:socket');
+var debug = _dereq_('debug')('engine.socketServer-client:socket');
 var index = _dereq_('indexof');
 var parser = _dereq_('engine.io-parser');
 var parseuri = _dereq_('parseuri');
@@ -88,7 +88,7 @@ function Socket(uri, opts){
   this.query = opts.query || {};
   if ('string' == typeof this.query) this.query = parseqs.decode(this.query);
   this.upgrade = false !== opts.upgrade;
-  this.path = (opts.path || '/engine.io').replace(/\/$/, '') + '/';
+  this.path = (opts.path || '/engine.socketServer').replace(/\/$/, '') + '/';
   this.forceJSONP = !!opts.forceJSONP;
   this.jsonp = false !== opts.jsonp;
   this.forceBase64 = !!opts.forceBase64;
@@ -167,7 +167,7 @@ Socket.prototype.createTransport = function (name) {
   debug('creating transport "%s"', name);
   var query = clone(this.query);
 
-  // append engine.io protocol identifier
+  // append engine.socketServer protocol identifier
   query.EIO = parser.protocol;
 
   // transport name
@@ -1212,7 +1212,7 @@ var XMLHttpRequest = _dereq_('xmlhttprequest-ssl');
 var Polling = _dereq_('./polling');
 var Emitter = _dereq_('component-emitter');
 var inherit = _dereq_('component-inherit');
-var debug = _dereq_('debug')('engine.io-client:polling-xhr');
+var debug = _dereq_('debug')('engine.socketServer-client:polling-xhr');
 
 /**
  * Module exports.
@@ -1628,7 +1628,7 @@ var parseqs = _dereq_('parseqs');
 var parser = _dereq_('engine.io-parser');
 var inherit = _dereq_('component-inherit');
 var yeast = _dereq_('yeast');
-var debug = _dereq_('debug')('engine.io-client:polling');
+var debug = _dereq_('debug')('engine.socketServer-client:polling');
 
 /**
  * Module exports.
@@ -1878,7 +1878,7 @@ var parser = _dereq_('engine.io-parser');
 var parseqs = _dereq_('parseqs');
 var inherit = _dereq_('component-inherit');
 var yeast = _dereq_('yeast');
-var debug = _dereq_('debug')('engine.io-client:websocket');
+var debug = _dereq_('debug')('engine.socketServer-client:websocket');
 var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 
 /**
@@ -4247,7 +4247,7 @@ module.exports = yeast;
 var url = _dereq_('./url');
 var parser = _dereq_('socket.io-parser');
 var Manager = _dereq_('./manager');
-var debug = _dereq_('debug')('socket.io-client');
+var debug = _dereq_('debug')('socket.socketServer-client');
 
 /**
  * Module exports.
@@ -4265,8 +4265,8 @@ var cache = exports.managers = {};
  * Looks up an existing `Manager` for multiplexing.
  * If the user summons:
  *
- *   `io('http://localhost/a');`
- *   `io('http://localhost/b');`
+ *   `socketServer('http://localhost/a');`
+ *   `socketServer('http://localhost/b');`
  *
  * We reuse the existing instance based on same scheme/port/host,
  * and we initialize sockets for each namespace.
@@ -4297,7 +4297,7 @@ function lookup(uri, opts) {
     io = Manager(source, opts);
   } else {
     if (!cache[id]) {
-      debug('new io instance for %s', source);
+      debug('new socketServer instance for %s', source);
       cache[id] = Manager(source, opts);
     }
     io = cache[id];
@@ -4344,7 +4344,7 @@ var Emitter = _dereq_('component-emitter');
 var parser = _dereq_('socket.io-parser');
 var on = _dereq_('./on');
 var bind = _dereq_('component-bind');
-var debug = _dereq_('debug')('socket.io-client:manager');
+var debug = _dereq_('debug')('socket.socketServer-client:manager');
 var indexOf = _dereq_('indexof');
 var Backoff = _dereq_('backo2');
 
@@ -4376,7 +4376,7 @@ function Manager(uri, opts){
   }
   opts = opts || {};
 
-  opts.path = opts.path || '/socket.io';
+  opts.path = opts.path || '/socket.socketServer';
   this.nsps = {};
   this.subs = [];
   this.opts = opts;
@@ -4928,7 +4928,7 @@ var Emitter = _dereq_('component-emitter');
 var toArray = _dereq_('to-array');
 var on = _dereq_('./on');
 var bind = _dereq_('component-bind');
-var debug = _dereq_('debug')('socket.io-client:socket');
+var debug = _dereq_('debug')('socket.socketServer-client:socket');
 var hasBin = _dereq_('has-binary');
 
 /**
@@ -4973,7 +4973,7 @@ var emit = Emitter.prototype.emit;
  */
 
 function Socket(io, nsp){
-  this.io = io;
+  this.socketServer = io;
   this.nsp = nsp;
   this.json = this; // compat
   this.ids = 0;
@@ -5270,7 +5270,7 @@ Socket.prototype.emitBuffered = function(){
 Socket.prototype.ondisconnect = function(){
   debug('server disconnect (%s)', this.nsp);
   this.destroy();
-  this.onclose('io server disconnect');
+  this.onclose('socketServer server disconnect');
 };
 
 /**
@@ -5312,7 +5312,7 @@ Socket.prototype.disconnect = function(){
 
   if (this.connected) {
     // fire events
-    this.onclose('io client disconnect');
+    this.onclose('socketServer client disconnect');
   }
   return this;
 };
@@ -5339,7 +5339,7 @@ Socket.prototype.compress = function(compress){
  */
 
 var parseuri = _dereq_('parseuri');
-var debug = _dereq_('debug')('socket.io-client:url');
+var debug = _dereq_('debug')('socket.socketServer-client:url');
 
 /**
  * Module exports.
@@ -5777,7 +5777,7 @@ var isBuf = _dereq_('./is-buffer');
  * Anything with blobs or files should be fed through removeBlobs before coming
  * here.
  *
- * @param {Object} packet - socket.io event packet
+ * @param {Object} packet - socket.socketServer event packet
  * @return {Object} with deconstructed packet and list of buffers
  * @api client
  */
@@ -6016,7 +6016,7 @@ exports.Encoder = Encoder;
 exports.Decoder = Decoder;
 
 /**
- * A socket.io Encoder instance
+ * A socket.socketServer Encoder instance
  *
  * @api client
  */
@@ -6117,7 +6117,7 @@ function encodeAsBinary(obj, callback) {
 }
 
 /**
- * A socket.io Decoder instance
+ * A socket.socketServer Decoder instance
  *
  * @return {Object} decoder
  * @api client
