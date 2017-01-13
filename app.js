@@ -1,97 +1,98 @@
-/**
- * Created by claude on 04.03.16.
- */
-const os = require('os');
+// Raspberry GPIO Access
 let rpio = require('rpio');
 
+// Express configuration
 let express = require('express');
 let app = express();
 app.use(express.static('./'));
-//app.use(express.static('socket.io'));
 
+// Log connection to the server
 let logger = require('./logger');
 app.use(logger);
 
+// To allow cross origin access - if client app hosted in other server
 let cors = require('cors');
 app.use(cors());
 
+// Switch configuration Class to serve GPIO configuration
 let CConfig = require('./class/c-config');
 let confInstance = new CConfig();
 let configuration = confInstance.getConfig().data;
 
-
-
+// HTTP Server creation and Websocket Server
 let server = require('http').createServer(app);
-let io = require('socket.io')(server);
+let socketServer = require('socket.io')(server);
 let gpioArray = [];
 
+// Init access to configured GPIO
 configuration.gpios.filter(element => {
   rpio.open(element.id, rpio.OUTPUT);
   rpio.write(element.id, element.state ? 1 : 0);
 });
 
-function broadcastStatus(socket, data) {
-  data = {server: os.hostname(), gpio: Number(data.gpio), state: rpio.read(data.gpio) === 1, description: data.description};
+/**
+ * broadcastStatus
+ * @param socket
+ * @param gpio
+ *
+ * @description Broadcast Status to all connected clients
+ */
+function broadcastStatus(socket, gpio) {
+  status = {server: configuration.server, id: Number(gpio.id), state: rpio.read(gpio.id) === 1, description: gpio.description};
 
-  socket.broadcast.emit('gpiostatus', data);
-  socket.emit('gpiostatus', data);
+  socket.broadcast.emit('gpiostatus', status);
+  socket.emit('gpiostatus', status);
 }
 
-io.on('connection', function (socket) {
+function broadcastConfiguration(socket) {
+  socket.broadcast.emit('configuration', configuration);
+  socket.emit('configuration', configuration);
+}
+
+socketServer.on('connection', function (socket) {
   console.log('Client connected... ');
 
-  socket.on('set', function (data) {
-    //console.log(data);
-
-    let i = configuration.gpios.findIndex(element => element.id === data.gpio);
-    if (i === -1) {
-      rpio.open(data.gpio, rpio.OUTPUT);
-      let newpin = {};
-      newpin.id = data.gpio;
-      ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
-      ("state" in data) ? newpin.state = data.state : newpin.state = false;
-      configuration.gpios.push(newpin);
-      confObject.updateConfig(configuration);
+  socket.on('set', function (gpio) {
+    if (confInstance.isNewGpio(gpio.id)) {
+      rpio.open(gpio.id, rpio.OUTPUT);
+      configuration = confInstance.insertGpio(gpio);
+      broadcastConfiguration(socket);
     }
 
-    switch (data.cmd.toUpperCase()) {
+    switch (gpio.cmd.toUpperCase()) {
       case 'TIMER':
-        if (data.value > 0) {
-          clearInterval(gpioArray[data.gpio]);
-          gpioArray[data.gpio] = gpioArray[data.gpio] = setInterval(function () {
-            rpio.write(data.gpio, (rpio.read(data.gpio) - 1) * -1);
-            broadcastStatus(socket, data.gpio);
-          }, 1000 * data.value);
+        if (gpio.value > 0) {
+          clearInterval(gpioArray[gpio.id]);
+          gpioArray[gpio.id] = gpioArray[gpio.id] = setInterval(function () {
+            rpio.write(gpio.id, (rpio.read(gpio.id) - 1) * -1);
+            broadcastStatus(socket, gpio.id);
+          }, 1000 * gpio.value);
         } else {
-          clearInterval(gpioArray[data.gpio]);
+          clearInterval(gpioArray[gpio.id]);
         }
         break;
       case 'STATE':
-        (data.value == 1 || data.value.toUpperCase() == 'ON') ? rpio.write(data.gpio, rpio.HIGH) : rpio.write(data.gpio, rpio.LOW);
+        (gpio.value == 1 ||
+         gpio.value == true ||
+         gpio.value.toUpperCase() == 'ON') ? rpio.write(gpio.id, rpio.HIGH) : rpio.write(gpio.id, rpio.LOW);
         break;
       default:
         break;
     }
-    broadcastStatus(socket, data);
+    broadcastStatus(socket, gpio);
   });
 
-  socket.on('get', function (data) {
-    //console.log(data);
+  socket.on('get', function (gpio) {
 
-    let i = configuration.gpios.findIndex(element => element.id === data.gpio);
-    if (i === -1) {
-      rpio.open(data.gpio, rpio.OUTPUT);
-      let newpin = {};
-      newpin.id = data.gpio;
-      ("description" in data) ? newpin.description = data.description : newpin.description = 'N/D';
-      ("state" in data) ? newpin.state = data.state : newpin.state = false;
-      configuration.gpios.push(newpin);
-      confObject.updateConfig(configuration);
+    if (confInstance.isNewGpio(gpio.id)) {
+      rpio.open(gpio.id, rpio.OUTPUT);
+      configuration = confInstance.insertGpio(gpio);
+      broadcastConfiguration(socket);
     }
 
-    switch (data.cmd.toUpperCase()) {
+    switch (gpio.cmd.toUpperCase()) {
       case 'STATE':
-        broadcastStatus(socket, data);
+        broadcastStatus(socket, gpio);
         break;
       default:
         break;
