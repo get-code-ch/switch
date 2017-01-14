@@ -94,6 +94,9 @@ socketServer.on('connection', function (socket) {
       case 'STATE':
         broadcastStatus(socket, gpio);
         break;
+      case 'CONFIGURATION':
+        broadcastConfiguration(socket);
+        break;
       default:
         break;
     }
