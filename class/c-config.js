@@ -1,10 +1,13 @@
-let fs = require('fs');
+const fs = require('fs');
 
 function CConfig () {
-  this._configuration = JSON.parse(fs.readFileSync('switch.conf'));
-  // console.log("CConfig constructor : " + JSON.stringify(this._configuration));
-};
+  let self = this;
+  fs.watch('switch.conf', function (event, filename) {
+    self._configuration = JSON.parse(fs.readFileSync('switch.conf'));
+  });
 
+  this._configuration = JSON.parse(fs.readFileSync('switch.conf'));
+}
 
 CConfig.prototype.getConfig = function () {
   return this._configuration;
