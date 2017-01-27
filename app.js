@@ -76,6 +76,10 @@ socketServer.on('connection', function (socket) {
          gpio.value == true ||
          gpio.value.toUpperCase() == 'ON') ? rpio.write(gpio.id, rpio.HIGH) : rpio.write(gpio.id, rpio.LOW);
         break;
+      case 'REMOVE':
+        configuration = confInstance.removeGpio(gpio.id);
+        broadcastConfiguration(socket);
+        break;
       default:
         break;
     }
