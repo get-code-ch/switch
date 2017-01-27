@@ -19,12 +19,23 @@ CConfig.prototype.updateConfig = function (data) {
   return this._configuration;
 };
 
+CConfig.prototype.removeGpio = function (id) {
+  this._configuration.data.gpios.splice (this._configuration.data.gpios.findIndex(element => element.id === id), 1);
+
+  console.log('Remove GPIO: ' + id);
+  this._configuration.data.gpios.sort((a, b) => a.id > b.id);
+  fs.writeFileSync('switch.conf', JSON.stringify(this._configuration));
+  return this._configuration;
+};
+
+
 CConfig.prototype.insertGpio = function (gpio) {
   let newPin = {};
   newPin.id = gpio.id;
   ("description" in gpio) ? newPin.description = gpio.description : newPin.description = 'N/D';
   ("state" in gpio) ? newPin.state = gpio.state : newPin.state = false;
   this._configuration.data.gpios.push(newPin);
+  this._configuration.data.gpios.sort((a, b) => a.id > b.id);
   console.log('Insert GPIO: ' + JSON.stringify(this._configuration.data));
   fs.writeFileSync('switch.conf', JSON.stringify(this._configuration));
   return this._configuration;
